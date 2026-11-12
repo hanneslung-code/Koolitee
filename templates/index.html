@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Koolitee kaaslane – leia tee peale sõber{% endblock %}
+{% block content %}
+<section class="hero-grid">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="eyebrow-dot"></span> TALLINNA JA HARJUMAA KOOLILASTELE</div>
+    <h1>Koolitee on<br><span>koos toredam.</span></h1>
+    <p class="hero-lead">Leia samas koolis käivad lapsed, kes alustavad oma päeva sinuga samast kandist. Leppige kokku ühine koolitee – jalgsi, rattaga, bussi või autoga.</p>
+    <div class="hero-actions">
+      <a href="{{ url_for('register') }}" class="button button-primary">Loo kasutaja <span>→</span></a>
+      <a href="#login" class="text-link">Mul on juba konto</a>
+    </div>
+    <div class="hero-trust"><span>✓</span> Täpset koduaadressi ei küsita ega näidata</div>
+  </div>
+  <div class="hero-visual" aria-label="Koolitee illustratsioon">
+    <div class="sun"></div><div class="cloud cloud-one"></div><div class="cloud cloud-two"></div>
+    <div class="hill hill-back"></div><div class="hill hill-front"></div>
+    <div class="school-building"><div class="school-roof"></div><div class="school-main"><div class="school-window"></div><div class="school-window"></div><div class="school-door"></div></div></div>
+    <div class="route-path"><span></span><span></span><span></span></div>
+    <div class="walker walker-one">●</div><div class="walker walker-two">●</div>
+    <div class="visual-caption"><b>Ühine teekond</b><small>algab ühest tutvusest</small></div>
+  </div>
+</section>
+<section class="benefit-row">
+  <article><span class="benefit-icon blue">⌖</span><div><b>Leia lähedalt</b><p>Sama kool ja sama linnaosa või asum.</p></div></article>
+  <article><span class="benefit-icon green">↔</span><div><b>Leppige kokku</b><p>Kutse, nõusolek ja vestlus ühes kohas.</p></div></article>
+  <article><span class="benefit-icon yellow">✉</span><div><b>Vanem on kursis</b><p>Kutse ja uue sõnumi kohta saabub teavitus.</p></div></article>
+</section>
+<section class="login-section" id="login">
+  <div><div class="eyebrow">TERE TULEMAST TAGASI</div><h2>Logi oma kontole sisse</h2><p>Kasuta registreerimisel valitud kasutajanime.</p></div>
+  <form method="post" action="{{ url_for('login') }}" class="login-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="username">Kasutajanimi</label><input id="username" name="username" autocomplete="username" placeholder="nt mari123" required>
+    <label for="password">Salasõna</label><input id="password" name="password" type="password" autocomplete="current-password" placeholder="Sinu salasõna" required>
+    <button class="button button-primary button-full" type="submit">Logi sisse <span>→</span></button>
+  </form>
+  <details class="resend-details"><summary>Kinnituskiri ei jõudnud kohale?</summary>
+    <form method="post" action="{{ url_for('resend_confirmation') }}" class="resend-form"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label for="resend_username">Kasutajanimi</label><input id="resend_username" name="username" placeholder="Sinu kasutajanimi" required><button class="button button-soft" type="submit">Saada uus kinnituslink</button></form>
+  </details>
+</section>
+<section class="safety-strip"><div class="safety-symbol">♥</div><div><b>Turvalisus on osa kooliteest.</b><p>Lapse konto aktiveeritakse lapsevanema või eestkostja e-kirja kaudu. Kontaktandmeid ei näidata teistele kasutajatele ning vestlus avaneb alles pärast kutse vastuvõtmist.</p></div></section>
+{% endblock %}

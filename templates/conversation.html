@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Vestlus – Koolitee kaaslane{% endblock %}
+{% block content %}
+<div class="conversation-page">
+  <a href="{{ url_for('dashboard') }}" class="back-link">← Tagasi koolitee vaatesse</a>
+  <section class="chat-panel">
+    <header class="chat-header"><div class="peer-avatar avatar-1">{{ peer.child_name[:1]|upper }}</div><div><b>Vestlus: {{ peer.child_name }}</b><small>{{ peer.area }}, {{ peer.region }} · {{ peer.mode }}</small></div><span class="status status-accepted">Kutse vastu võetud</span></header>
+    <div class="chat-safety">Siin saate koolitee kohta kokku leppida. Ärge jagage aadressi, telefoninumbrit, e-posti ega paroole. Konkreetne kohtumispaik leppige kokku koos lapsevanemaga.</div>
+    <div class="message-list">
+      {% for message in messages %}
+        <div class="message-row {% if message.sender_id == current_user.id %}mine{% else %}theirs{% endif %}"><div class="message-bubble"><b>{{ message.sender_name }}</b><p>{{ message.body }}</p><small>{{ message.created_at|datetime }}</small></div></div>
+      {% else %}<p class="side-muted">Vestlust alustatakse siin.</p>{% endfor %}
+    </div>
+    <form method="post" action="{{ url_for('send_message', invitation_id=invitation.id) }}" class="chat-compose"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label for="body">Sinu sõnum</label><textarea name="body" id="body" maxlength="1000" rows="3" placeholder="Tere! Mis päeval võiksime koos kooli minna?" required></textarea><div class="compose-bottom"><small>Telefoninumbrid, e-postid ja veebiaadressid blokeeritakse.</small><button class="button button-primary" type="submit">Saada sõnum <span>→</span></button></div></form>
+    <div class="chat-actions"><form method="post" action="{{ url_for('report_user', peer_id=peer.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="invitation_id" value="{{ invitation.id }}"><label for="reason">Teata sobimatust käitumisest</label><textarea id="reason" name="reason" rows="2" maxlength="600" placeholder="Kirjelda, mis juhtus (vähemalt 5 märki)."></textarea><button class="danger-link" type="submit">Saada teade haldajale</button></form><form method="post" action="{{ url_for('block_user', peer_id=peer.id) }}" onsubmit="return confirm('Kas blokeerid selle kasutaja ja sulged vestluse?');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="danger-link" type="submit">Blokeeri kasutaja</button></form></div>
+  </section>
+</div>
+{% endblock %}

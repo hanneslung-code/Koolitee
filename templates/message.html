@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} – Koolitee kaaslane{% endblock %}
+{% block content %}
+<section class="center-card"><div class="confirm-icon {% if not success %}muted-icon{% endif %}">{% if success %}✓{% else %}!{% endif %}</div><h1>{{ title }}</h1><p>{{ message }}</p><a class="button button-primary button-full" href="{{ url_for('dashboard') if current_user else url_for('index') }}">Jätka</a></section>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Kinnita konto – Koolitee kaaslane{% endblock %}
+{% block content %}
+<section class="center-card">
+  <div class="confirm-icon">✓</div>
+  <div class="eyebrow">LAPSEVANEMA KINNITUS</div>
+  <h1>Kinnita <span>{{ child_name }}</span> konto</h1>
+  <p>Kontot saab aktiveerida lapsevanem või eestkostja. Kinnitamisega annad nõusoleku lapse konto loomiseks ja tema andmete kasutamiseks Koolitee kaaslase keskkonnas konto kirjeldatud eesmärgil.</p>
+  <div class="consent-details"><b>Mida see tähendab?</b><ul><li>Teistele kasutajatele kuvatakse eesnimi, kool, asum/piirkond ja liikumisviis.</li><li>Lapsevanema e-posti aadress jääb privaatseks.</li><li>Konto saab teistele kutseid saata ja vastu võtta ning vestelda alles pärast aktiveerimist.</li><li>Konto saab keskkonnas kustutada.</li></ul></div>
+  <form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="button button-primary button-full" type="submit">Kinnitan ja aktiveerin konto</button></form>
+</section>
+{% endblock %}

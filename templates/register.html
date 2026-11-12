@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Loo konto – Koolitee kaaslane{% endblock %}
+{% block head %}<script src="{{ url_for('static', filename='register.js') }}" defer></script>{% endblock %}
+{% block content %}
+<div class="form-layout">
+  <div class="form-intro">
+    <div class="eyebrow">ALUSTAME SINU KOOLITEEST</div>
+    <h1>Loo oma<br><span>koolitee konto.</span></h1>
+    <p>Vali kool ja kodukant. Me ei küsi sinu tänavat ega maja numbrit – ainult ligikaudset piirkonda.</p>
+    <div class="mini-route"><span>⌂</span><i></i><span>✦</span><b>Kodu kandist kooli</b></div>
+    <div class="privacy-note"><b>Väike, aga tähtis asi.</b><br>Teistele kuvatakse ainult sinu eesnimi, kool, piirkond ja liikumisviis. Lapsevanema e-post jääb alati privaatseks.</div>
+  </div>
+  <form class="panel-form" method="post" action="{{ url_for('register') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="form-heading"><h2>Minu andmed</h2><span class="step-tag">01 / 01</span></div>
+    <label for="child_name">Lapse eesnimi</label>
+    <input id="child_name" name="child_name" value="{{ form_data.get('child_name','') }}" maxlength="40" placeholder="Eesnimi" required>
+    <label for="username">Kasutajanimi</label>
+    <input id="username" name="username" value="{{ form_data.get('username','') }}" minlength="3" maxlength="24" pattern="[A-Za-z0-9._-]{3,24}" autocomplete="username" placeholder="nt mari123" required>
+    <p class="field-hint">Selle abil logid sisse. Teised kasutajad seda ei näe.</p>
+    <label for="school">Sinu kool</label>
+    <select id="school" name="school" required><option value="">Vali kool…</option>{% for school in schools %}<option value="{{ school }}" {% if form_data.get('school') == school %}selected{% endif %}>{{ school }}</option>{% endfor %}<option value="__other__" {% if form_data.get('school') == '__other__' %}selected{% endif %}>Muu kool (sisesta nimi)</option></select>
+    <div id="other-school-wrap" class="other-school-wrap" {% if form_data.get("school") != "__other__" %}hidden{% endif %}><label for="other_school">Kooli nimi</label><input id="other_school" name="other_school" value="{{ form_data.get('other_school','') }}" maxlength="100" placeholder="Sisesta kooli ametlik nimi"></div>
+    <div class="field-grid">
+      <div><label for="region">Linnaosa / vald</label>
+        <select id="region" name="region" data-areas="{{ regions|tojson|forceescape }}" required><option value="">Vali piirkond…</option>{% for region in regions.keys() %}<option value="{{ region }}" {% if form_data.get('region') == region %}selected{% endif %}>{{ region }}</option>{% endfor %}</select>
+      </div>
+      <div><label for="area">Asum / asula</label>
+        <select id="area" name="area" data-selected="{{ form_data.get('area','') }}" required><option value="">Vali esmalt piirkond…</option></select>
+      </div>
+    </div>
+    <label>Kuidas tavaliselt kooli liigud?</label>
+    <div class="mode-grid">
+      {% for mode, emoji in [('Jalgsi','🚶'),('Rattaga','🚲'),('Bussiga','🚌'),('Autoga','🚗')] %}
+      <label class="mode-choice"><input type="radio" name="mode" value="{{ mode }}" {% if form_data.get('mode') == mode %}checked{% endif %} required><span>{{ emoji }}</span><b>{{ mode }}</b></label>
+      {% endfor %}
+    </div>
+    <label for="guardian_email">Lapsevanema / eestkostja e-post</label>
+    <input id="guardian_email" name="guardian_email" type="email" value="{{ form_data.get('guardian_email','') }}" autocomplete="email" placeholder="vanem@näide.ee" required>
+    <p class="field-hint">Seda aadressi teistele ei näidata. Siia saadetakse konto kinnitus ja teavitused kutsete ning sõnumite kohta.</p>
+    <label for="password">Loo salasõna</label>
+    <input id="password" name="password" type="password" minlength="10" autocomplete="new-password" placeholder="Vähemalt 10 märki" required>
+    <label class="consent-check"><input type="checkbox" name="guardian_ack" value="yes" {% if form_data.get('guardian_ack') == 'yes' %}checked{% endif %} required><span>Kinnitan, et lapsevanem või eestkostja on konto loomisest teadlik ning kinnitab konto e-posti teel.</span></label>
+    <button class="button button-primary button-full" type="submit">Loo konto <span>→</span></button>
+    <p class="form-footnote">Konto muutub aktiivseks alles pärast lapsevanema/eestkostja e-kirjas oleva kinnituse tegemist.</p>
+  </form>
+</div>
+{% endblock %}

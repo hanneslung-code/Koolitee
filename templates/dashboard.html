@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Minu koolitee – Koolitee kaaslane{% endblock %}
+{% block content %}
+<section class="dashboard-heading">
+  <div><div class="eyebrow">SINU KOOLITEE VÕRGUSTIK</div><h1>Tere, {{ user.child_name }}! <span>👋</span></h1><p>Vaatame, kes sinu koolikaaslastest elavad samas kandis.</p></div>
+  <div class="profile-chip"><span class="profile-avatar">{{ user.child_name[:1]|upper }}</span><div><b>{{ user.child_name }}</b><small>{{ user.school }}</small><small>{{ user.area }}, {{ user.region }}</small></div></div>
+</section>
+<div class="dashboard-grid">
+  <section class="dashboard-main">
+    <div class="section-title"><div><div class="eyebrow">SAMA KOOL, SAMA KANT</div><h2>Koolikaaslased sinu lähedal</h2></div><span class="count-pill">{{ peers|length }} leitud</span></div>
+    {% if peers %}
+      <div class="peer-list">
+      {% for peer in peers %}
+        <article class="peer-card">
+          <div class="peer-avatar avatar-{{ loop.index0 % 4 }}">{{ peer.child_name[:1]|upper }}</div>
+          <div class="peer-info"><b>{{ peer.child_name }}</b><span>{{ peer.area }}, {{ peer.region }}</span><div class="peer-meta"><span>{{ peer.mode }}</span><span class="distance-tag">{{ peer.distance_label }}</span></div></div>
+          <form method="post" action="{{ url_for('send_invitation', peer_id=peer.id) }}" class="invite-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="intro" value="Tere! Kas soovid arutada, kas saaksime vahel koos kooli minna?">
+            <button class="button button-soft" type="submit">Saada kutse <span>→</span></button>
+          </form>
+        </article>
+      {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state"><div class="empty-icon">⌖</div><b>Veel pole tuttavaid koolikaaslasi</b><p>Kui samast koolist ja piirkonnast liitub keegi veel, ilmub ta siia. Anna ideest sõbrale või klassikaaslasele teada.</p></div>
+    {% endif %}
+    <section class="panel-section">
+      <div class="section-title"><div><div class="eyebrow">OOTAVAD SINU VASTUST</div><h2>Sulle saadetud kutsed</h2></div><span class="count-pill">{{ incoming|length }}</span></div>
+      {% if incoming %}
+        {% for invite in incoming %}
+          <article class="request-card"><div class="request-top"><div><b>{{ invite.peer_name }}</b><span>{{ invite.peer_area }}, {{ invite.peer_region }}</span></div><span class="status status-pending">Ootab vastust</span></div><p class="request-message">“{{ invite.intro or 'Soovib sinuga koolitee kokkulepet arutada.' }}”</p>
+            <div class="request-actions"><form method="post" action="{{ url_for('respond_invitation', invitation_id=invite.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="accept"><button class="button button-primary" type="submit">Võta vastu</button></form><form method="post" action="{{ url_for('respond_invitation', invitation_id=invite.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="action" value="decline"><button class="button button-quiet" type="submit">Keeldu</button></form></div>
+          </article>
+        {% endfor %}
+      {% else %}<div class="small-empty">Praegu pole uusi kutseid.</div>{% endif %}
+    </section>
+  </section>
+  <aside class="dashboard-side">
+    <section class="side-card"><div class="side-icon">💬</div><div class="eyebrow">KUTSED, MILLE SAATSID</div><h3>Ootavad vastust</h3>
+      {% if outgoing %}{% for invite in outgoing %}<div class="side-row"><span>{{ invite.peer_name }}<small>{{ invite.peer_area }}</small></span><span class="status status-pending">Ootel</span></div>{% endfor %}{% else %}<p class="side-muted">Sinu saadetud kutsed ilmuvad siia.</p>{% endif %}
+    </section>
+    <section class="side-card"><div class="side-icon green-icon">↔</div><div class="eyebrow">KOKKULEPPED</div><h3>Avatud vestlused</h3>
+      {% if conversations %}{% for conversation in conversations %}<a class="conversation-link" href="{{ url_for('conversation', invitation_id=conversation.id) }}"><span class="conversation-avatar">{{ conversation.peer_name[:1]|upper }}</span><span><b>{{ conversation.peer_name }}</b><small>{{ conversation.last_message or 'Vestlus on alanud' }}</small></span><span class="arrow">→</span></a>{% endfor %}{% else %}<p class="side-muted">Kui keegi sinu kutse vastu võtab, saate siin vestelda.</p>{% endif %}
+    </section>
+    <section class="safety-card"><b>🛡️ Pea meeles</b><p>Ära jaga vestluses oma koduaadressi, telefoninumbrit ega paroole. Koolitee kohtumispaik leppige kokku koos lapsevanemaga.</p></section>
+    <details class="account-details"><summary>Konto seaded</summary><p>Konto kustutamisel eemaldatakse sinu profiil ja sellega seotud vestlused sellest keskkonnast.</p><form method="post" action="{{ url_for('delete_account') }}" onsubmit="return confirm('Kas soovid konto ja sellega seotud andmed jäädavalt kustutada?');"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="danger-link" type="submit">Kustuta konto</button></form></details>
+  </aside>
+</div>
+{% endblock %}
